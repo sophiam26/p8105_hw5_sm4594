@@ -1,10 +1,19 @@
 ---
-title: "p8105_hw5_sm4594"
+title: "Homework #5"
 author: "Sophia Miller"
 date: "11/3/2019"
 output: github_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+# Problem 1
+
+```{r iris}
+library(tidyverse)
+
+set.seed(10)
+
+iris_with_missing = iris %>% 
+  map_df(~replace(.x, sample(1:150, 20), NA)) %>%
+  mutate(Species = as.character(Species))
 ```
+
