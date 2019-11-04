@@ -1,0 +1,10 @@
+---
+title: "p8105_hw5_sm4594"
+author: "Sophia Miller"
+date: "11/3/2019"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
