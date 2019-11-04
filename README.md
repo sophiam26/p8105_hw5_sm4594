@@ -1,1 +1,1 @@
-# p8105_hw5_sm4594
+# This is the repository for Data Science homework #5
