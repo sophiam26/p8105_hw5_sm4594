@@ -99,6 +99,8 @@ sim_results1 %>%
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
+Plotting average estimate of beta 1 vs. true value of beta 1
+
 ```{r prob3_second_plot}
 sim_results1 %>%
   group_by(beta1) %>% 
@@ -108,6 +110,25 @@ sim_results1 %>%
   geom_point() +
   labs(
     title = "Average Estimate of Beta 1 vs. True Value of Beta 1",
+    x = "Beta 1",
+    y = "Average Estimate of Beta 1"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+Plotting average estimate of beta 1 vs. true value of beta 1 for samples where null was rejected:
+
+```{r}
+sim_results1 %>% 
+  mutate(reject = ifelse(p.value <= 0.05, "significant", "non-significant")) %>%
+  filter(reject == "significant") %>% 
+  group_by(beta1) %>% 
+  summarize(mean_estimate = mean(estimate)) %>%
+  ggplot(aes(x = beta1, y = mean_estimate)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    title = "Average Estimate of Beta 1 vs. True Value of Beta 1, When Null was Rejected",
     x = "Beta 1",
     y = "Average Estimate of Beta 1"
   ) +
