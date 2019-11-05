@@ -4,10 +4,15 @@ author: "Sophia Miller"
 date: "11/3/2019"
 output: github_document
 ---
+```{r setup, include = FALSE}
+library(tidyverse)
+library(rvest)
+```
 
 # Problem 1
 
 ```{r iris}
+set.seed(10)
 library(tidyverse)
 
 set.seed(10)
@@ -15,5 +20,19 @@ set.seed(10)
 iris_with_missing = iris %>% 
   map_df(~replace(.x, sample(1:150, 20), NA)) %>%
   mutate(Species = as.character(Species))
+```
+
+```{r replace_missing_function}
+replace_missing = function(x) {
+  
+   if (is.numeric(x)) {
+    ifelse(is.na(x), mean(x, na.rm = TRUE), x)
+   } else if (is.character(x)) {
+     ifelse(is.na(x), "virginica", x)
+   }
+     
+}
+
+iris_complete = map_df(iris_with_missing, replace_missing)
 ```
 
