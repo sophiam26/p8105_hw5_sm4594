@@ -68,7 +68,7 @@ sim_results =
   rerun(1000, sim_regression()) %>% 
   bind_rows
 
-#Now run function for beta1 = 0,1,2,3,4,5,6
+#now run function for beta1 = 0,1,2,3,4,5,6
 sim_results1 = 
   tibble(
     beta1 = c(0, 1, 2, 3, 4, 5, 6)) %>% 
@@ -78,6 +78,8 @@ sim_results1 =
   select(-output_list) %>% 
   unnest(estimate_dfs)
 ```
+
+Plotting effect size vs. power:
 
 ```{r pr0b3_first_plot}
 sim_results1 %>% 
@@ -93,6 +95,21 @@ sim_results1 %>%
     title = "Relationship between Effect Size and Power",
     x = "Beta 1",
     y = "Proportion of Times Null was Rejected (Power)"
+  ) +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r prob3_second_plot}
+sim_results1 %>%
+  group_by(beta1) %>% 
+  summarize(mean_estimate = mean(estimate)) %>%
+  ggplot(aes(x = beta1, y = mean_estimate)) +
+  geom_line() +
+  geom_point() +
+  labs(
+    title = "Average Estimate of Beta 1 vs. True Value of Beta 1",
+    x = "Beta 1",
+    y = "Average Estimate of Beta 1"
   ) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
