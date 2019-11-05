@@ -93,4 +93,16 @@ sim_results =
   unnest(estimate_dfs)
 ```
 
+```{r pr0b3_first_plot}
+sim_results %>% 
+  filter(term == "x") %>% 
+  mutate(reject = ifelse(p.value <= 0.05, "significant", "non-significant")) %>% 
+  filter(reject == "significant") %>% 
+  group_by(beta1) %>% 
+  mutate(significant_count = n()) %>% 
+  distinct(.keep_all = TRUE) %>%
+  mutate(significant_rate = significant_count/1000) %>% 
+  ggplot(aes(x = beta1, y = significant_rate)) + 
+  geom_line()
+```
 
