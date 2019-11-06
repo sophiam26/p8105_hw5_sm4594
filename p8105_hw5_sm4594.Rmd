@@ -45,6 +45,21 @@ replace_missing = function(x) {
 iris_complete = map_df(iris_with_missing, replace_missing)
 ```
 
+# Problem 2
+
+```{r list_files}
+df = 
+  tibble(
+    participant = list.files(path = "data"))
+
+df_tidy = 
+  df %>% 
+  mutate(
+    data = (map(participant, ~read_csv("./data/con_01.csv")))
+    ) %>% 
+  unnest(cols = data)
+```
+
 # Problem 3
 
 Here, we run a simluation to explore power: 
@@ -77,26 +92,6 @@ sim_results1 =
     estimate_dfs = map(output_list, bind_rows)) %>% 
   select(-output_list) %>% 
   unnest(estimate_dfs)
-```
-
-Plotting effect size vs. power:
-
-```{r pr0b3_first_plot}
-sim_results1 %>% 
-  mutate(reject = ifelse(p.value <= 0.05, "significant", "non-significant")) %>% 
-  group_by(beta1, reject) %>% 
-  summarize(significant_count = n()) %>% 
-  filter(reject == "significant") %>% 
-  mutate(significant_rate = significant_count/1000) %>% 
-  ggplot(aes(x = beta1, y = significant_rate)) + 
-  geom_line() +
-  geom_point() +
-  labs(
-    title = "Relationship between Effect Size and Power",
-    x = "Beta 1",
-    y = "Proportion of Times Null was Rejected (Power)"
-  ) +
-  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 Plotting average estimate of beta 1 vs. true value of beta 1
