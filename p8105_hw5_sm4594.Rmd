@@ -48,16 +48,20 @@ iris_complete = map_df(iris_with_missing, replace_missing)
 # Problem 2
 
 ```{r list_files}
-df = 
-  tibble(
-    participant = list.files(path = "data"))
+#function
 
-df_tidy = 
-  df %>% 
-  mutate(
-    data = (map(participant, ~read_csv("./data/con_01.csv")))
-    ) %>% 
-  unnest(cols = data)
+read_data = function(path) {
+  df = read_csv(path)
+  df
+}
+
+directory_base = "./data/"
+
+complete = tibble(
+  participant = list.files(path = "./data"), 
+  values = str_c(directory_base, participant)) %>% 
+    mutate(
+    data = (map(values, read_data)))
 ```
 
 # Problem 3
@@ -68,8 +72,8 @@ Here, we run a simluation to explore power:
 sim_regression = function(n = 30, beta0 = 2, beta1 = 0) {
   
   sim_data = tibble(
-    x = rnorm(n, mean = 0, sd = 50),
-    y = beta0 + beta1 * x + rnorm(n, 0, 50)
+    x = rnorm(n, mean = 0, sd = 1),
+    y = beta0 + beta1 * x + rnorm(n, 0, 50^0.50)
   )
   
   ls_fit = lm(y ~ x, data = sim_data)
@@ -80,7 +84,7 @@ sim_regression = function(n = 30, beta0 = 2, beta1 = 0) {
 
 #run function for beta1 = 0 first
 sim_results = 
-  rerun(1000, sim_regression()) %>% 
+  rerun(10000, sim_regression()) %>% 
   bind_rows
 
 #now run function for beta1 = 0,1,2,3,4,5,6
@@ -88,10 +92,22 @@ sim_results1 =
   tibble(
     beta1 = c(0, 1, 2, 3, 4, 5, 6)) %>% 
   mutate(
-    output_list = map(.x = beta1, ~rerun(1000, sim_regression(beta1 = .x))),
+    output_list = map(.x = beta1, ~rerun(10000, sim_regression(beta1 = .x))),
     estimate_dfs = map(output_list, bind_rows)) %>% 
   select(-output_list) %>% 
   unnest(estimate_dfs)
+```
+
+```{r}
+sim_results1 %>% 
+  mutate(reject = ifelse(p.value <= 0.05, "significant", "non-significant")) %>% 
+  filter(reject == "significant") %>% 
+  group_by(beta1) %>% 
+  mutate(significant_count = n()) %>% 
+  distinct(.keep_all = TRUE) %>%
+  mutate(significant_rate = significant_count/1000) %>% 
+  ggplot(aes(x = beta1, y = significant_rate)) + 
+  geom_col()
 ```
 
 Plotting average estimate of beta 1 vs. true value of beta 1
