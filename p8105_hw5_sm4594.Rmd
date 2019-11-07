@@ -99,6 +99,8 @@ labs(
 theme(plot.title = element_text(hjust = 0.5))
 ```
 
+As we can see from the plot above, the behavior of observations over time varies by study arm. At week 1, the observations for both arms are similar. However, the observations in the experimental arm increase over the course of the eight weeks, where as the observations in the control arm appear to remain similar over time.
+
 # Problem 3
 
 Here, we run a simluation to explore power: 
