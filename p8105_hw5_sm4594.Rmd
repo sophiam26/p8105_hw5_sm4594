@@ -89,8 +89,22 @@ complete = tibble(
 complete = as.data.frame(complete)
 
 ggplot(complete, aes(x = week, y = value)) +
+geom_line(aes(group = id, color = arm))
+
+#extra
+
+complete %>% 
+  filter(arm == "con") %>% 
+  ggplot(aes(x = week, y = value)) +
   geom_line(aes(group = id, color = arm))
-  
+
+complete %>% 
+  filter(arm == "exp") %>% 
+  ggplot(aes(x = week, y = value)) +
+  geom_line(aes(group = id))
+
+#geom_point
+#geom_path
 
 ```
 
@@ -130,14 +144,22 @@ sim_results1 =
 
 ```{r}
 sim_results1 %>% 
-  mutate(reject = ifelse(p.value <= 0.05, "significant", "non-significant")) %>% 
-  filter(reject == "significant") %>% 
-  group_by(beta1) %>% 
+  mutate(reject = ifelse(p.value <= 0.05, "significant", "non-significant")) %>%
+  group_by(beta1, reject) %>% 
   mutate(significant_count = n()) %>% 
+  mutate(significant_rate = significant_count/10000) %>%
+  select(beta1, significant_rate) %>% 
+  filter(reject == "significant") %>% 
   distinct(.keep_all = TRUE) %>%
-  mutate(significant_rate = significant_count/1000) %>% 
   ggplot(aes(x = beta1, y = significant_rate)) + 
-  geom_col()
+  geom_col(aes(fill = "viridis"), show.legend = FALSE) +
+  labs(
+    title = "Power vs. True Value of Beta1",
+    x = "Beta 1",
+    y = "Power",
+    fill = " "
+  ) +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 Plotting average estimate of beta 1 vs. true value of beta 1
