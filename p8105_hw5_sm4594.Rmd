@@ -58,10 +58,9 @@ iris_complete = map_df(iris_with_missing, replace_missing)
 
 # Problem 2
 
+In this problem, we are creating a tidy data frame containing data from 20 csv files from a longitudinal study (10 control participants and 10 experimental participants) and plotting observations for each subject over time
 
-
-```{r list_files}
-#function
+```{r list_files, message = FALSE}
 
 read_data = function(path) {
   df = read_csv(path)
@@ -74,7 +73,25 @@ complete = tibble(
   participant = list.files(path = "./data"), 
   values = str_c(directory_base, participant)) %>% 
     mutate(
-    data = (map(values, read_data)))
+    data = (map(values, read_data))) %>%
+  unnest(cols = data) %>% 
+  pivot_longer(
+    week_1:week_8, 
+    names_to = "week",
+    values_to = "value") %>% 
+  separate(participant, c("arm", "id")) %>% 
+  separate(week, c("week_label", "week")) %>% 
+  select(-values, -week_label) %>% 
+  mutate(
+    id = as.numeric(id),
+    week = as.numeric(week))
+  
+complete = as.data.frame(complete)
+
+ggplot(complete, aes(x = week, y = value)) +
+  geom_line(aes(group = id, color = arm))
+  
+
 ```
 
 # Problem 3
