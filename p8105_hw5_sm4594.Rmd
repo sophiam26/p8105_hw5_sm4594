@@ -136,7 +136,7 @@ sim_results1 =
   unnest(estimate_dfs)
 ```
 
-```{r regression_plots}
+```{r regression_plot1}
 sim_results1 %>% 
   mutate(
     reject = ifelse(p.value <= 0.05, "significant", "non-significant")
@@ -162,25 +162,8 @@ sim_results1 %>%
 
 As shown in the plot above, we see that power increases as effect size increases. 
 
+
 Plotting average estimate of beta 1 vs. true value of beta 1:
-
-```{r prob3_second_plot}
-sim_results1 %>%
-  group_by(beta1) %>% 
-  summarize(mean_estimate = mean(estimate)) %>%
-  ggplot(aes(x = beta1, y = mean_estimate)) +
-  geom_col(aes(fill = "viridis"), show.legend = FALSE) +
-  labs(
-    title = "Average Estimate of Beta 1 vs. True Value of Beta 1",
-    x = "Beta 1",
-    y = "Average Estimate of Beta 1",
-    fill = " "
-  ) +
-  theme(plot.title = element_text(hjust = 0.5))
-```
-
-
-Plotting average estimate of beta 1 vs. true value of beta 1 for samples where null was rejected:
 
 ```{r}
 sim_results_plot1 = sim_results1 %>%
