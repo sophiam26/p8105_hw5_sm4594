@@ -121,7 +121,7 @@ sim_regression = function(n = 30, beta0 = 2, beta1 = 0) {
 
 #run function for beta1 = 0 first
 sim_results = 
-  rerun(10, sim_regression()) %>% 
+  rerun(10000, sim_regression()) %>% 
   bind_rows
 
 #now run function for beta1 = 0,1,2,3,4,5,6
@@ -129,7 +129,7 @@ sim_results1 =
   tibble(
     beta1 = c(0, 1, 2, 3, 4, 5, 6)) %>% 
   mutate(
-    output_list = map(.x = beta1, ~rerun(10, sim_regression(beta1 = .x))),
+    output_list = map(.x = beta1, ~rerun(10000, sim_regression(beta1 = .x))),
     estimate_dfs = map(output_list, bind_rows)) %>% 
   select(-output_list) %>% 
   unnest(estimate_dfs)
@@ -192,4 +192,4 @@ ggplot(sim_results_plot1, aes(x = beta1, y = mean_estimate)) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-The two plots above show that the average estimate of beta1 is approximately equal to the true value of beta1 across all samples. However, the average estimate of beta1 does not alwats approximate the true value of beta1 when we are looking only at samples where the null was rejected.
+The two plots above show that the average estimate of beta1 is approximately equal to the true value of beta1 across all samples. However, the average estimate of beta1 does not always approximate the true value of beta1 when we are looking only at samples where the null was rejected. This is because when we are looking only at times when the null was rejected, we will see estimated betas that are significantly different than the true betas. In this case, we would not expect the average estimates to match the true betas.
